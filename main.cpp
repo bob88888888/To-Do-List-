@@ -3,11 +3,12 @@
 //3) define functions: display, mark as done, set, delete, edit task/task content
 #include <iostream>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
 class Task{
-protected:
+private:
     int id;
     string name;
     int dueDate;
@@ -15,14 +16,28 @@ protected:
     bool done;
 
 public:
-
-    //for appending task into the to-do list
-    Task(int ID, string n, int date, int time){
-        id = ID;
-        name = n;
-        dueDate = date;
-        dueTime = time;
+    Task(){
         done = false;
+    }
+
+    void setID(int ID){
+        id = ID;
+    }
+
+    void setName(string Name){
+        name = Name;
+    }
+
+    void setDueDate(int DueDate){
+        dueDate = DueDate;
+    }
+
+    void setDueTime(int DueTime){
+        dueTime = DueTime;
+    }
+
+    void setDone(bool Done){
+        done = Done;
     }
 
     int getID(){
@@ -46,20 +61,42 @@ public:
     }
 };
 
+class addTask{
+protected:
+    Task task;
+    ofstream addRow;
+
+public:
+    void add(string Dir){
+        addRow.open(Dir, ios::app);
+        if (addRow.is_open()){
+            addRow << task.getID() << task.getName() << task.getDueDate() << task.getDueTime() << task.getDone() << endl;
+        }
+        addRow.close();
+        return;
+    }
+};
+
 int main()
 {
+    const string dir = "C:/Users/FiercePC/DocumentsProject/C++/toDoList/task.csv";
+    Task newTask;
+    addTask.addNewTask;
+
+    ID = 1;
+    newTask.setID(ID);
     string setName;
     cout << "Enter the task name: " << endl;
-    cin >> setName;
+    cin >> newtask.setName(newName);
 
-    int setDueDate;
-    cout << "Enter the task's due date(DD//MM//YY): " << endl;
-    cin >> setDueDate;
+    int newDueDate;
+    cout << "Enter the task's due date(DD/MM/YY): " << endl;
+    cin >> newTask.setDueDate(newDueDate);
 
-    int setDueTime;
+    int newDueTime;
     cout << "Enter the task's due time(HH/MM): " << endl;
-    cin >> setDueTime;
+    cin >> newTask.setDueTime(newDueTime);
 
-    Task t1(1, setName, setDueDate, setDueTime);
-    cout << t1.getID() << "," << t1.getName() << "," << t1.getDueDate() << "," << t1.getDueTime() << "," << t1.getDone() << endl;
+    addNewTask.add(dir);
+    return 0;
 }
