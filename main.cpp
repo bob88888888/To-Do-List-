@@ -61,42 +61,67 @@ public:
     }
 };
 
-class addTask{
-protected:
-    Task task;
-    ofstream addRow;
-
+class AddTask{
 public:
-    void add(string Dir){
-        addRow.open(Dir, ios::app);
+    void add(Task task, string Dir){
+        ofstream addRow (Dir, ios::app);
         if (addRow.is_open()){
-            addRow << task.getID() << task.getName() << task.getDueDate() << task.getDueTime() << task.getDone() << endl;
+            addRow << task.getID() << "," << task.getName() << "," << task.getDueDate() << "," << task.getDueTime() << "," << task.getDone() << endl;
         }
         addRow.close();
-        return;
     }
 };
 
+class taskManager{
+protected:
+    int operation;
+    string directory;
+
+public:
+    taskManager(int o, string dir){
+        operation = o;
+        directory = dir;
+    }
+
+    void mainLoop(){
+        switch (operation){
+            case 1:{
+                Task newTask;
+                AddTask addNewTask;
+
+                int ID = 1;
+                newTask.setID(ID);
+
+                string newName;
+                cout << "Enter the task name: " << endl;
+                cin >> newName;
+                newTask.setName(newName);
+
+                int newDueDate;
+                cout << "Enter the task's due date(DD/MM/YY): " << endl;
+                cin >> newDueDate;
+                newTask.setDueDate(newDueDate);
+
+
+                int newDueTime;
+                cout << "Enter the task's due time(HH/MM): " << endl;
+                cin >> newDueTime;
+                newTask.setDueTime(newDueTime);
+
+                addNewTask.add(newTask, directory);
+                break;
+            }
+        }
+    }
+};
+
+
 int main()
 {
-    const string dir = "C:/Users/FiercePC/DocumentsProject/C++/toDoList/task.csv";
-    Task newTask;
-    addTask.addNewTask;
-
-    ID = 1;
-    newTask.setID(ID);
-    string setName;
-    cout << "Enter the task name: " << endl;
-    cin >> newtask.setName(newName);
-
-    int newDueDate;
-    cout << "Enter the task's due date(DD/MM/YY): " << endl;
-    cin >> newTask.setDueDate(newDueDate);
-
-    int newDueTime;
-    cout << "Enter the task's due time(HH/MM): " << endl;
-    cin >> newTask.setDueTime(newDueTime);
-
-    addNewTask.add(dir);
-    return 0;
+    const string dir = "C:/Users/FiercePC/Documents/Project/C++/toDoList/task.csv";
+    int operation;
+    cout << "What operation do you want to perform?(1. add/2. display): " << endl;
+    cin >> operation;
+    taskManager t1(operation, dir);
+    t1.mainLoop();
 }
