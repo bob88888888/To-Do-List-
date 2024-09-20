@@ -72,6 +72,31 @@ public:
     }
 };
 
+class Display{
+protected:
+    Task task;
+    ifstream reader;
+    string line;
+public:
+    void displayTasks(string Dir){
+        ifstream reader(Dir);
+        if(reader.is_open()){
+            while (getline(reader, line)){
+                stringstream sstream(line);
+                string id, name, dueDate, dueTime, done;
+                getline(sstream, id, ',');
+                getline(sstream, name, ',');
+                getline(sstream, dueDate, ',');
+                getline(sstream, dueTime, ',');
+                getline(sstream, done, ',');
+
+                cout << id << "," << name << "," << dueDate << "," << dueTime << "," << done << endl;
+            }
+            reader.close();
+        }
+    }
+};
+
 class taskManager{
 protected:
     int operation;
@@ -110,6 +135,12 @@ public:
 
                 addNewTask.add(newTask, directory);
                 break;
+            }
+            case 2:{
+                Display display;
+                display.displayTasks(directory);
+                break;
+
             }
         }
     }
