@@ -1,9 +1,12 @@
 //1) create model of a task
 //2) user input for inserting the task
-//3) define functions: display, mark as done, set, delete, edit task/task content
+//3) define functions: display, mark as done, set, edit task/task content
+//4) Add interface/menu for the system
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
+#include <sstream>
 
 using namespace std;
 
@@ -97,6 +100,57 @@ public:
     }
 };
 
+class markAsDone{
+protected:
+    Task task;
+    ofstream writer;
+    string line;
+    vector <Task> reUpload;
+    bool found = false;
+public:
+
+    markAsDone(){}
+
+    void markDone(string taskName, string dir){
+        ifstream reader(dir);
+        if(reader.is_open()){
+            while (getline(reader, line)){
+                stringstream sstream(line);
+                string id, name, dueDate, dueTime, done;
+                getline(sstream, id, ',');
+                getline(sstream, name, ',');
+                getline(sstream, dueDate, ',');
+                getline(sstream, dueTime, ',');
+                getline(sstream, done, ',');
+
+                if (name == taskName){
+                    done = stoi(done);
+                    done = true;
+                    cout << id << "," << name << "," << dueDate << "," << dueTime << "," << done << endl;
+                    found = true;
+                    continue;
+                }
+                else{
+                    task.setID(stoi(id));
+                    task.setName(name);
+                    task.setDueDate(stoi(dueDate));
+                    task.setDueTime(stoi(dueTime));
+                    task.setDone(stoi(done));
+
+                    reUpload.push_back(task);
+                }
+            }
+            reader.close();
+        }
+        ofstream writer(dir);
+        if (writer.is_open()){
+            for (Task line : reUpload){
+                writer << line.getID() << "," << line.getName() << "," << line.getDueDate() << "," << line.getDueTime() << "," << line.getDone() << endl;
+            }
+        }
+    }
+};
+
 class taskManager{
 protected:
     int operation;
@@ -136,22 +190,30 @@ public:
                 addNewTask.add(newTask, directory);
                 break;
             }
+
             case 2:{
                 Display display;
                 display.displayTasks(directory);
                 break;
 
             }
+            case 3:{
+                markAsDone m1;
+                string nameOfTask;
+                cout << "Name the task needed to be marked as done: " << endl;
+                cin >> nameOfTask;
+                m1.markDone(nameOfTask, directory);
+                break;
+            }
         }
     }
 };
-
 
 int main()
 {
     const string dir = "C:/Users/FiercePC/Documents/Project/C++/toDoList/task.csv";
     int operation;
-    cout << "What operation do you want to perform?(1. add/2. display): " << endl;
+    cout << "What operation do you want to perform?(1. add/2. display/3. Mark as done): " << endl;
     cin >> operation;
     taskManager t1(operation, dir);
     t1.mainLoop();
