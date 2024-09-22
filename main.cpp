@@ -1,6 +1,6 @@
 //1) create model of a task
 //2) user input for inserting the task
-//3) define functions: display, mark as done, set, delete, edit task/task content
+//3) define functions: display, mark as done, set, edit task/task content
 //4) Add interface/menu for the system
 #include <iostream>
 #include <string>
@@ -139,12 +139,14 @@ public:
 
                     reUpload.push_back(task);
                 }
-
-                for (Task field:reUpload){
-                    cout << task.getID() << "," << task.getName() << "," << task.getDueDate() << "," << task.getDueTime() << "," << task.getDone << endl;
-                }
             }
             reader.close();
+        }
+        ofstream writer(dir);
+        if (writer.is_open()){
+            for (Task line : reUpload){
+                writer << line.getID() << "," << line.getName() << "," << line.getDueDate() << "," << line.getDueTime() << "," << line.getDone() << endl;
+            }
         }
     }
 };
@@ -216,5 +218,3 @@ int main()
     taskManager t1(operation, dir);
     t1.mainLoop();
 }
-
-
