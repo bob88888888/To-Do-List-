@@ -8,6 +8,7 @@
 #include <vector>
 #include <sstream>
 
+
 using namespace std;
 
 class Task{
@@ -20,7 +21,7 @@ private:
 
 public:
     Task(){
-        done = false;
+        done = 0;
     }
 
     void setID(int ID){
@@ -72,6 +73,7 @@ public:
             addRow << task.getID() << "," << task.getName() << "," << task.getDueDate() << "," << task.getDueTime() << "," << task.getDone() << endl;
         }
         addRow.close();
+        cout << "The task is added to the list." << endl;
     }
 };
 
@@ -150,10 +152,10 @@ public:
         }
     }
 };
+
 class editTask{
 protected:
     Task task;
-    ofstream writer;
     string line;
     vector <Task> reUpload;
     bool found = false;
@@ -163,6 +165,7 @@ public:
 
     void edit(string taskName, string dir){
         ifstream reader(dir);
+        bool found;
         if(reader.is_open()){
             while (getline(reader, line)){
                 stringstream sstream(line);
@@ -173,59 +176,81 @@ public:
                 getline(sstream, dueTime, ',');
                 getline(sstream, done, ',');
 
-                if (name == taskName){
-                    done = stoi(done);
-                    done = true;
-                    cout << id << "," << name << "," << dueDate << "," << dueTime << "," << done << endl;
-                    found = true;
-                    string field;
-                    cout << "Which field do you want to edit?(name/dueDate/dueTime): " << endl;
-                    cin >> field;
+                int taskID = stoi(id);
+                int taskDueDate = stoi(dueDate);
+                int taskDueTime = stoi(dueTime);
+                bool taskDone = stoi(done);
 
-                    if (field == "name"){
-                        string newName;
-                        cout << "Enter the task name you want it to be changed to: " << endl;
-                        cin >> newName;
-                        name = newName;
+                try{
+                    if (name == taskName){
+                        done = true;
+                        cout << id << "," << name << "," << dueDate << "," << dueTime << "," << done << endl;
+                        found = true;
+                        string field;
+                        cout << "Which field do you want to edit?(name/dueDate/dueTime): " << endl;
+                        cin >> field;
+
+                        if (field == "name"){
+                            string newName;
+                            cout << "Enter the task name you want it to be changed to: " << endl;
+                            cin >> newName;
+                            name = newName;
+                        }
+                        else if(field == "dueDate"){
+                            int newDueDate;
+                            cout << "Enter the new due date of the task: " << endl;
+                            cin >> newDueDate;
+                            dueDate = to_string(newDueDate);
+                        }
+                        else if(field == "dueTime"){
+                            int newDueTime;
+                            cout << "Enter the new due time of the task: " << endl;
+                            cin >> newDueTime;
+                            dueTime = to_string(newDueTime);
+                        }
+                        /*task.setID(stoi(id));
+                        task.setName(name);
+                        task.setDueDate(stoi(dueDate));
+                        task.setDueTime(stoi(dueTime));
+                        task.setDone(stoi(done));*/
+
+                        cout << id << "," << name << "," << dueDate << "," << dueTime << "," << done << endl;
+                        reUpload.push_back(task);
+
                     }
-                    else if(field == "dueDate"){
-                        int newDueDate;
-                        cout << "Enter the new due date of the task: " << endl;
-                        cin >> newDueDate;
-                        dueDate = to_string(newDueDate);
+                    else{
+                        /*task.setID(stoi(id));
+                        task.setName(name);
+                        task.setDueDate(stoi(dueDate));
+                        task.setDueTime(stoi(dueTime));
+                        task.setDone(stoi(done));*/
+
+                        reUpload.push_back(task);
                     }
-                    else if(field == "dueTime"){
-                        int newDueTime;
-                        cout << "Enter the new due time of the task: " << endl;
-                        cin >> newDueTime;
-                        dueTime = to_string(newDueTime);
-
-                    task.setID(id);
-                    task.setName(name);
-                    task.setDueDate(dueDate);
-                    task.setDueTime(dueTime);
-                    task.setDone(done);
-
-                    cout << id << "," << name << "," << stoi(dueDate << "," << dueTime << "," << done << endl;
-                    reUpload.push_back(task);
                 }
-                else{
-                    task.setID(stoi(id));
-                    task.setName(name);
-                    task.setDueDate(stoi(dueDate));
-                    task.setDueTime(stoi(dueTime));
-                    task.setDone(stoi(done));
-
-                    reUpload.push_back(task);
+                catch (const std::exception &e) {
+                    cerr << "Error: " << e.what() << endl;
                 }
             }
-            reader.close();
+            if (!found){
+                cout << "The task does not exist in the list" << endl;
+                reader.close();
+                return;
+            }
+            else if(found){
+                cout << "The task have been edited successfully" << endl;
+            }
         }
+        reader.close();
+
+
         ofstream writer(dir);
         if (writer.is_open()){
-            for (Task line : reUpload){
+            for (Task &line : reUpload){
                 writer << line.getID() << "," << line.getName() << "," << line.getDueDate() << "," << line.getDueTime() << "," << line.getDone() << endl;
             }
+            writer.close();
+
         }
     }
 };
@@ -305,4 +330,3 @@ int main()
     taskManager t1(operation, dir);
     t1.mainLoop();
 }
-
